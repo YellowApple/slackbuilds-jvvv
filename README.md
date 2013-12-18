@@ -1,4 +1,13 @@
 slackbuilds
 ===========
 
-These are SlackBuilds that I maintain. Some are available at http://slackbuilds.org, some have yet to be submitted.
+These are SlackBuilds that I maintain.
+
+Available at http://slackbuilds.org:
+bspwm
+dvdbackup
+sxhkd
+
+Yet to be submitted:
+sutils (pending)
+xtitle (pending)
