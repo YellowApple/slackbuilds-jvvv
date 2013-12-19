@@ -7,6 +7,6 @@ These are SlackBuilds that I maintain.
 
 * bspwm
 * dvdbackup
-* sutils (pending approval)
+* sutils (approved, awaiting next SBo update)
 * sxhkd
-* xtitle (pending approval)
+* xtitle (approved, awaiting next SBo upddate)
