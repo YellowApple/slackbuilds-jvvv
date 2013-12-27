@@ -1,0 +1,30 @@
+# HOW TO EDIT THIS FILE:
+# The "handy ruler" below makes it easier to edit a package description.
+# Line up the first '|' above the ':' following the base package name, and
+# the '|' on the right side marks the last column you can put a character in.
+# You must make exactly 11 lines for the formatting to be correct.  It's also
+# customary to leave one space after the ':' except on otherwise blank lines.
+
+                |-----handy-ruler------------------------------------------------------|
+xf86-input-wacom: xf86-input-wacom (X.Org X11 driver for Wacom and Wacom-like tablets)
+xf86-input-wacom:
+xf86-input-wacom: This package provides the X.Org X11 driver for Wacom and Wacom-like
+xf86-input-wacom: tablets. It obsoletes the linuxwacom driver and supports X server
+xf86-input-wacom: versions 1.7 and higher.
+xf86-input-wacom: Since this driver is an X11 driver only, a kernel driver is required
+xf86-input-wacom: to get hardware support. If the kernel driver is older than this
+xf86-input-wacom: driver, some features may not be available.
+xf86-input-wacom:
+xf86-input-wacom: website: http://linuxwacom.sourceforge.net
+xf86-input-wacom:
+
+
+
+
+
+
+
+
+
+
+
