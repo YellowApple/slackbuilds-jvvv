@@ -3,11 +3,10 @@ slackbuilds
 
 These are SlackBuilds that I maintain.
 
-Available at http://slackbuilds.org:
-bspwm
-dvdbackup
-sxhkd
+#### Available at http://slackbuilds.org:
 
-Yet to be submitted:
-sutils (pending)
-xtitle (pending)
+* bspwm
+* dvdbackup
+* sutils (approved, awaiting next SBo update)
+* sxhkd
+* xtitle (approved, awaiting next SBo upddate)
