@@ -1,0 +1,25 @@
+README for input-wacom SlackBuild
+
+The input-wacom driver is the usb kernel driver/module paired with
+xf86-input-wacom. It backports new features and model support to kernels
+as old as 2.6.30. You should not usually need to use this driver in most
+circumstances, though it may be useful for recently-announced tablets or
+older distributions.
+
+At the time of writing, this module was tested with kernel 3.10.17.
+Building requires the kernel source to be installed to /usr/src. The
+SlackBuild script expects the symlink /usr/src/linux to point to the
+version of the kernel that the module with run on. The specify a
+different kernel location, use the environment variable KERNEL_TREE,
+in this manner:
+
+$ KERNEL_TREE=~/linux-3.10.25 ./SlackBuild.input-wacom
+
+If you are using this module for a recently released tablet, then
+you probably want/need an updated xf86-input-wacom package.
+
+Also note that until you have tested that this module works for you,
+it is recommended that you backup the current wacom module so that
+it can be restored without re-installing the whole kernel:
+
+# cp /lib/modules/3.10.17/kernel/drivers/input/tablet/wacom.ko{,.bak}
