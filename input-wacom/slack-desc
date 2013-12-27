@@ -14,6 +14,6 @@ input-wacom: kernels as old as 2.6.30. You should not usually need to use this
 input-wacom: driver in most circumstances, though it may be useful for
 input-wacom: recently-announced tablets or older distributions. 
 input-wacom:
-input-wacom: homepage: http://sourceforge.net/apps/mediawiki/linuxwacom
+input-wacom: homepage: http://linuxwacom.sourceforge.net
 input-wacom:
 input-wacom:
