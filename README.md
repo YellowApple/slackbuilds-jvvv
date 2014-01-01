@@ -11,7 +11,7 @@ These are SlackBuilds that I maintain.
 * sxhkd
 * xtitle
 
-#### Not submitted to SBo:
+#### Not yet submitted to SBo:
 
 * input-wacom
 * xf86-input-wacom
