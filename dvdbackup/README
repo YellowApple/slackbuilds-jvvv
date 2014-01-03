@@ -1,1 +1,5 @@
-dvdbackup - simple commandline DVD backup software
+dvdbackup is a tool to backup video DVDs from the command line.
+It has the advantages of being small, fast, and easy to use.
+
+libdvdread >= 0.9.6 is required.
+libdvdcss is optional but most likely desired.
