@@ -7,6 +7,11 @@ These are SlackBuilds that I maintain.
 
 * bspwm
 * dvdbackup
-* sutils (approved, awaiting next SBo update)
+* sutils
 * sxhkd
-* xtitle (approved, awaiting next SBo upddate)
+* xtitle
+
+#### Not yet submitted to SBo:
+
+* input-wacom
+* xf86-input-wacom
