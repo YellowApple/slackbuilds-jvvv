@@ -1,0 +1,11 @@
+
+RequiredBuilder is a simple tool to help Slackware packages developers
+finding dependencies of a package and in particular writing the slack-required
+file for the slapt-get's dependency checking.
+
+It scans the package directory tree and finds all the binary dependencies 
+using ldd. Besides it's able to identify scripts that need perl or python,
+or classes that need java. After collecting dependencies it adds them to the
+slack-required file using the informations in /var/log/packages.
+Of course it doesn't substitute the package developer, in fact it won't
+delete any handwritten dependency in the slack-required file.

@@ -1,0 +1,30 @@
+# HOW TO EDIT THIS FILE:
+# The "handy ruler" below makes it easier to edit a package description.
+# Line up the first '|' above the ':' following the base package name, and
+# the '|' on the right side marks the last column you can put a character in.
+# You must make exactly 11 lines for the formatting to be correct.  It's also
+# customary to leave one space after the ':' except on otherwise blank lines.
+
+               |-----handy-ruler------------------------------------------------------|
+requiredbuilder: requiredbuilder (help find Slackware package dependencies)
+requiredbuilder:
+requiredbuilder: RequiredBuilder is a simple tool to help Slackware package developers
+requiredbuilder: to find dependencies of a package and in writing the slack-required
+requiredbuilder: file for the slapt-get's dependency checking. It scans a package 
+requiredbuilder: directory tree and finds all binary dependencies using ldd. It's
+requiredbuilder: able to identify scripts that need perl or python, or classes that
+requiredbuilder: need java. After collecting dependencies it adds them to the
+requiredbuilder: slack-required file using the informations in /var/log/packages.
+requiredbuilder: Of course it doesn't substitute the package developer, in fact it
+requiredbuilder: won't delete any handwritten dependency in the slack-required file.
+
+
+
+
+
+
+
+
+
+
+
