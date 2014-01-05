@@ -26,22 +26,35 @@ set -e
 
 PRGNAM=dirvish
 VERSION=${VERSION:-1.2.1}
-ARCH=noarch
 BUILD=${BUILD:-1}
 TAG=${TAG:-_SBo}
-PKGTYPE=txz
-TMP=${TMP:-/tmp/SBo}
 
+if [ -z "$ARCH" ]; then
+  case "$( uname -m )" in
+    i?86) ARCH=i486 ;;
+    arm*) ARCH=arm ;;
+       *) ARCH=$( uname -m ) ;;
+  esac
+fi
+
+TMP=${TMP:-/tmp/SBo}
 OUTPUT=${OUTPUT:-/tmp}
 CWD=$(pwd)
-WORKDIR=$TMP/$PRGNAM-$VERSION
 PKG=$TMP/package-$PRGNAM
 
+rm -rf $PKG
+mkdir -p $TMP $PKG $OUTPUT
 cd $TMP
-rm -rf $WORKDIR $PKG
-mkdir -p $WORKDIR $PKG/install
-cd $WORKDIR
+rm -rf $PRGNAM-$VERSION
 tar xf $CWD/$PRGNAM-$VERSION.tgz
+cd $PRGNAM-$VERSION
+chown -R root:root .
+find -L . \
+ \( -executable \) -exec chmod 755 {} \; -o \
+ \( ! -executable \) -exec chmod 644 {} \;
+
+patch -p1 < $CWD/patches/01-imsort-reserved-warning.patch
+patch -p1 < $CWD/patches/04-dirvish-runall-usrsbin.patch
 
 eval $(grep -e '^EXECUTABLES' install.sh)
 eval $(grep -e '^MANPAGES' install.sh)
@@ -88,10 +101,10 @@ mkdir -p $PKG/usr/doc/$PRGNAM-$VERSION
 cp -a CHANGELOG COPYING FAQ.html \
   INSTALL RELEASE.html TODO.html \
   $PKG/usr/doc/$PRGNAM-$VERSION/
-
 cat $CWD/$PRGNAM.SlackBuild > $PKG/usr/doc/$PRGNAM-$VERSION/$PRGNAM.SlackBuild
+
+mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
 
 cd $PKG
-
-/sbin/makepkg -l y -c y $OUTPUT/$PRGNAM-$VERSION-$ARCH-$BUILD.$PKGTYPE
+/sbin/makepkg -l y -c n $OUTPUT/$PRGNAM-$VERSION-$ARCH-$BUILD$TAG.${PKGTYPE:-tgz}
