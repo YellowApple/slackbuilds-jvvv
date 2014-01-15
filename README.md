@@ -13,5 +13,9 @@ These are SlackBuilds that I maintain.
 
 #### Not yet submitted to SBo:
 
+* dirvish (forked from vbatts)
 * input-wacom
+* perl-time-parsedate (forked from vbatts)
+* perl-time-period (forked from vbatts)
+* requiredbuilder
 * xf86-input-wacom
