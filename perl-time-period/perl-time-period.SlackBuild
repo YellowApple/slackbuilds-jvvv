@@ -26,18 +26,25 @@
 
 
 PRGNAM=perl-time-period
-SRC_PRGNAM=Period
-VERSION=${VERSION:-1.20}
-ARCH=${ARCH:-i486}
+SRC_PRGNAM=Time-Period
+VERSION=${VERSION:-1.24}
 BUILD=${BUILD:-1}
 TAG=${TAG:-_SBo}
+
+if [ -z "$ARCH" ]; then
+  case "$( uname -m )" in
+    i?86) ARCH=i486 ;;
+    arm*) ARCH=arm ;;
+       *) ARCH=$( uname -m ) ;;
+  esac
+fi
 
 CWD=$(pwd)
 TMP=${TMP:-/tmp/SBo}
 PKG=$TMP/package-$PRGNAM
 OUTPUT=${OUTPUT:-/tmp}
 
-DOCFILES="README "
+DOCFILES="LICENSE MANIFEST README"
 
 if [ "$ARCH" = "i486" ]; then
   SLKCFLAGS="-O2 -march=i486 -mtune=i686"
@@ -80,11 +87,6 @@ mv $PKG/usr/share/man $PKG/usr/
 # Remove empty directories
 find $PKG -depth -type d -empty -exec rm -rf {} \;
 
-# strip libraries
-( cd $PKG
-  find . | xargs file | grep "shared object" | grep ELF | cut -f 1 -d : | xargs strip --strip-unneeded 2> /dev/null
-)
-    
 # compress man pages
 ( cd $PKG/usr/man
   find . -type f -exec gzip -9 {} \;
