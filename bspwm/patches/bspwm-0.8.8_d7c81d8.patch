@@ -1,0 +1,604 @@
+diff --git a/doc/TODO.md b/doc/TODO.md
+index 4757461..29ff2bd 100644
+--- a/doc/TODO.md
++++ b/doc/TODO.md
+@@ -1,4 +1,5 @@
+-- Desktops as nodes?
++- Set more attributes in `make_client` (instead of doing it in `apply_rules`) and don't pass `XCB_NONE` as argument.
++- Internal nodes selectors/actions: labels?
+ - Invisible state.
+ - Restore built-in pointer grabbing?
+ - `FILE *` instead of `char *` for writing the server response?
+diff --git a/doc/bspwm.1 b/doc/bspwm.1
+index 0248bd5..66c3d40 100644
+--- a/doc/bspwm.1
++++ b/doc/bspwm.1
+@@ -2,12 +2,12 @@
+ .\"     Title: bspwm
+ .\"    Author: [see the "Author" section]
+ .\" Generator: DocBook XSL Stylesheets v1.78.1 <http://docbook.sf.net/>
+-.\"      Date: 01/03/2014
++.\"      Date: 01/04/2014
+ .\"    Manual: Bspwm Manual
+ .\"    Source: Bspwm 0.8.8
+ .\"  Language: English
+ .\"
+-.TH "BSPWM" "1" "01/03/2014" "Bspwm 0\&.8\&.8" "Bspwm Manual"
++.TH "BSPWM" "1" "01/04/2014" "Bspwm 0\&.8\&.8" "Bspwm Manual"
+ .\" -----------------------------------------------------------------
+ .\" * Define some portability stuff
+ .\" -----------------------------------------------------------------
+@@ -620,6 +620,11 @@ Flip the tree of the selected desktop\&.
+ Rotate the tree of the selected desktop\&.
+ .RE
+ .PP
++\fB\-E\fR, \fB\-\-equalize\fR
++.RS 4
++Reset the split ratios of the tree of the selected desktop\&.
++.RE
++.PP
+ \fB\-B\fR, \fB\-\-balance\fR
+ .RS 4
+ Adjust the split ratios of the tree of the selected desktop so that all windows occupy the same area\&.
+@@ -881,7 +886,7 @@ rule \fIOPTIONS\fR
+ \fBOptions\fR
+ .RS 4
+ .PP
+-\fB\-a\fR, \fB\-\-add\fR <class_name>|<instance_name>|* [\fB\-o\fR|\fB\-\-one\-shot\fR] [desktop=DESKTOP_SEL|monitor=MONITOR_SEL] [(floating|fullscreen|pseudo_tiled|locked|sticky|private|center|lower|follow|manage|focus)=(true|false)]
++\fB\-a\fR, \fB\-\-add\fR <class_name>|<instance_name>|* [\fB\-o\fR|\fB\-\-one\-shot\fR] [monitor=MONITOR_SEL|desktop=DESKTOP_SEL|window=WINDOW_SEL] [(floating|fullscreen|pseudo_tiled|locked|sticky|private|center|lower|follow|manage|focus)=(true|false)]
+ .RS 4
+ Create a new rule\&.
+ .RE
+diff --git a/doc/bspwm.1.txt b/doc/bspwm.1.txt
+index 278d089..a921510 100644
+--- a/doc/bspwm.1.txt
++++ b/doc/bspwm.1.txt
+@@ -395,6 +395,9 @@ Options
+ *-R*, *--rotate* '90|270|180'::
+     Rotate the tree of the selected desktop.
+ 
++*-E*, *--equalize*::
++    Reset the split ratios of the tree of the selected desktop.
++
+ *-B*, *--balance*::
+     Adjust the split ratios of the tree of the selected desktop so that all windows occupy the same area.
+ 
+@@ -541,7 +544,7 @@ rule 'OPTIONS'
+ Options
+ ^^^^^^^
+ 
+-*-a*, *--add* <class_name>|<instance_name>|* [*-o*|*--one-shot*] [desktop=DESKTOP_SEL|monitor=MONITOR_SEL] [(floating|fullscreen|pseudo_tiled|locked|sticky|private|center|lower|follow|manage|focus)=(true|false)]::
++*-a*, *--add* <class_name>|<instance_name>|* [*-o*|*--one-shot*] [monitor=MONITOR_SEL|desktop=DESKTOP_SEL|window=WINDOW_SEL] [(floating|fullscreen|pseudo_tiled|locked|sticky|private|center|lower|follow|manage|focus)=(true|false)]::
+     Create a new rule.
+ 
+ *-r*, *--remove* ^<n>|head|tail|<class_name>|<instance_name>|*...::
+diff --git a/events.c b/events.c
+index b41a9a7..ac0024c 100644
+--- a/events.c
++++ b/events.c
+@@ -87,26 +87,38 @@ void configure_request(xcb_generic_event_t *evt)
+ 
+     coordinates_t loc;
+     bool is_managed = locate_window(e->window, &loc);
++    client_t *c = (is_managed ? loc.node->client : NULL);
++    int w = 0, h = 0;
+ 
+-    if (is_managed && !is_floating(loc.node->client)) {
++    if (is_managed && !is_floating(c)) {
+         if (e->value_mask & XCB_CONFIG_WINDOW_X)
+-            loc.node->client->floating_rectangle.x = e->x;
++            c->floating_rectangle.x = e->x;
+         if (e->value_mask & XCB_CONFIG_WINDOW_Y)
+-            loc.node->client->floating_rectangle.y = e->y;
++            c->floating_rectangle.y = e->y;
+         if (e->value_mask & XCB_CONFIG_WINDOW_WIDTH)
+-            loc.node->client->floating_rectangle.width = e->width;
++            w = e->width;
+         if (e->value_mask & XCB_CONFIG_WINDOW_HEIGHT)
+-            loc.node->client->floating_rectangle.height = e->height;
++            h = e->height;
++
++        if (w != 0) {
++            restrain_floating_width(c, &w);
++            c->floating_rectangle.width = w;
++        }
++
++        if (h != 0) {
++            restrain_floating_height(c, &h);
++            c->floating_rectangle.height = h;
++        }
+ 
+         xcb_configure_notify_event_t evt;
+         xcb_rectangle_t rect;
+-        xcb_window_t win = loc.node->client->window;
+-        unsigned int bw = loc.node->client->border_width;
++        xcb_window_t win = c->window;
++        unsigned int bw = c->border_width;
+ 
+-        if (loc.node->client->fullscreen)
++        if (c->fullscreen)
+             rect = loc.monitor->rectangle;
+         else
+-            rect = loc.node->client->tiled_rectangle;
++            rect = c->tiled_rectangle;
+ 
+         evt.response_type = XCB_CONFIGURE_NOTIFY;
+         evt.event = win;
+@@ -121,7 +133,7 @@ void configure_request(xcb_generic_event_t *evt)
+ 
+         xcb_send_event(dpy, false, win, XCB_EVENT_MASK_STRUCTURE_NOTIFY, (const char *) &evt);
+ 
+-        if (loc.node->client->pseudo_tiled)
++        if (c->pseudo_tiled)
+             arrange(loc.monitor, loc.desktop);
+     } else {
+         uint16_t mask = 0;
+@@ -132,28 +144,34 @@ void configure_request(xcb_generic_event_t *evt)
+             mask |= XCB_CONFIG_WINDOW_X;
+             values[i++] = e->x;
+             if (is_managed)
+-                loc.node->client->floating_rectangle.x = e->x;
++                c->floating_rectangle.x = e->x;
+         }
+ 
+         if (e->value_mask & XCB_CONFIG_WINDOW_Y) {
+             mask |= XCB_CONFIG_WINDOW_Y;
+             values[i++] = e->y;
+             if (is_managed)
+-                loc.node->client->floating_rectangle.y = e->y;
++                c->floating_rectangle.y = e->y;
+         }
+ 
+         if (e->value_mask & XCB_CONFIG_WINDOW_WIDTH) {
+             mask |= XCB_CONFIG_WINDOW_WIDTH;
+-            values[i++] = e->width;
+-            if (is_managed)
+-                loc.node->client->floating_rectangle.width = e->width;
++            w = e->width;
++            if (is_managed) {
++                restrain_floating_width(c, &w);
++                c->floating_rectangle.width = w;
++            }
++            values[i++] = w;
+         }
+ 
+         if (e->value_mask & XCB_CONFIG_WINDOW_HEIGHT) {
+             mask |= XCB_CONFIG_WINDOW_HEIGHT;
+-            values[i++] = e->height;
+-            if (is_managed)
+-                loc.node->client->floating_rectangle.height = e->height;
++            h = e->height;
++            if (is_managed) {
++                restrain_floating_height(c, &h);
++                c->floating_rectangle.height = h;
++            }
++            values[i++] = h;
+         }
+ 
+         if (!is_managed && e->value_mask & XCB_CONFIG_WINDOW_BORDER_WIDTH) {
+@@ -175,7 +193,7 @@ void configure_request(xcb_generic_event_t *evt)
+     }
+ 
+     if (is_managed)
+-        translate_client(monitor_from_client(loc.node->client), loc.monitor, loc.node->client);
++        translate_client(monitor_from_client(c), loc.monitor, c);
+ }
+ 
+ void destroy_notify(xcb_generic_event_t *evt)
+@@ -199,17 +217,38 @@ void unmap_notify(xcb_generic_event_t *evt)
+ void property_notify(xcb_generic_event_t *evt)
+ {
+     xcb_property_notify_event_t *e = (xcb_property_notify_event_t *) evt;
+-    xcb_icccm_wm_hints_t hints;
+ 
+     /* PRINTF("property notify %X\n", e->window); */
+ 
+-    if (e->atom != XCB_ATOM_WM_HINTS)
++    if (e->atom != XCB_ATOM_WM_HINTS && e->atom != XCB_ATOM_WM_NORMAL_HINTS)
+         return;
+ 
+     coordinates_t loc;
+-    if (locate_window(e->window, &loc)
+-            && xcb_icccm_get_wm_hints_reply(dpy, xcb_icccm_get_wm_hints(dpy, e->window), &hints, NULL) == 1)
+-        set_urgency(loc.monitor, loc.desktop, loc.node, xcb_icccm_wm_hints_get_urgency(&hints));
++    if (!locate_window(e->window, &loc))
++            return;
++
++    if (e->atom == XCB_ATOM_WM_HINTS) {
++        xcb_icccm_wm_hints_t hints;
++        if (xcb_icccm_get_wm_hints_reply(dpy, xcb_icccm_get_wm_hints(dpy, e->window), &hints, NULL) == 1
++                && (hints.flags & XCB_ICCCM_WM_HINT_X_URGENCY))
++            set_urgency(loc.monitor, loc.desktop, loc.node, xcb_icccm_wm_hints_get_urgency(&hints));
++    } else if (e->atom == XCB_ATOM_WM_NORMAL_HINTS) {
++        client_t *c = loc.node->client;
++        xcb_size_hints_t size_hints;
++        if (xcb_icccm_get_wm_normal_hints_reply(dpy, xcb_icccm_get_wm_normal_hints(dpy, e->window), &size_hints, NULL) == 1
++                && (size_hints.flags & (XCB_ICCCM_SIZE_HINT_P_MIN_SIZE | XCB_ICCCM_SIZE_HINT_P_MAX_SIZE))) {
++            c->min_width = size_hints.min_width;
++            c->max_width = size_hints.max_width;
++            c->min_height = size_hints.min_height;
++            c->max_height = size_hints.max_height;
++            int w = c->floating_rectangle.width;
++            int h = c->floating_rectangle.height;
++            restrain_floating_size(c, &w, &h);
++            c->floating_rectangle.width = w;
++            c->floating_rectangle.height = h;
++            arrange(loc.monitor, loc.desktop);
++        }
++    }
+ }
+ 
+ void client_message(xcb_generic_event_t *evt)
+diff --git a/examples/panel/panel_bar b/examples/panel/panel_bar
+index 7cbd2fa..22ffb38 100755
+--- a/examples/panel/panel_bar
++++ b/examples/panel/panel_bar
+@@ -6,11 +6,11 @@ while read -r line ; do
+     case $line in
+         S*)
+             # clock output
+-            sys_infos="\\br\\f6${line#?}"
++            sys_infos="\\br\\f7${line#?}"
+             ;;
+         T*)
+             # xtitle output
+-            title="\\br\\f7${line#?}"
++            title="\\br\\f4${line#?}"
+             ;;
+         W*)
+             # bspwm internal state
+@@ -48,7 +48,7 @@ while read -r line ; do
+                     L*)
+                         # layout
+                         layout=$(printf "%s" "${name}" | sed 's/\(.\).*/\U\1/')
+-                        wm_infos="$wm_infos    \\br\\f6$layout"
++                        wm_infos="$wm_infos    \\br\\f2$layout"
+                         ;;
+                 esac
+                 shift
+diff --git a/messages.c b/messages.c
+index 2eb5cd8..d5ac764 100644
+--- a/messages.c
++++ b/messages.c
+@@ -435,6 +435,9 @@ bool cmd_desktop(char **args, int num)
+             } else {
+                 return false;
+             }
++        } else if (streq("-E", *args) || streq("--equalize", *args)) {
++            equalize_tree(trg.desktop->root);
++            dirty = true;
+         } else if (streq("-B", *args) || streq("--balance", *args)) {
+             balance_tree(trg.desktop->root);
+             dirty = true;
+diff --git a/pointer.c b/pointer.c
+index c06922e..12eceb6 100644
+--- a/pointer.c
++++ b/pointer.c
+@@ -173,8 +173,7 @@ void track_pointer(int root_x, int root_y)
+     if (frozen_pointer->action == ACTION_NONE)
+         return;
+ 
+-    int16_t delta_x, delta_y, x = 0, y = 0, w = 1, h = 1;
+-    uint16_t width, height;
++    int delta_x, delta_y, x = 0, y = 0, w = 1, h = 1;
+ 
+     pointer_action_t pac = frozen_pointer->action;
+     monitor_t *m = frozen_pointer->monitor;
+@@ -311,15 +310,27 @@ void track_pointer(int root_x, int root_y)
+                             break;
+                     }
+                 }
+-                width = MAX(1, w);
+-                height = MAX(1, h);
++
++                int oldw = w, oldh = h;
++                restrain_floating_size(c, &w, &h);
++
+                 if (c->pseudo_tiled) {
+-                    c->floating_rectangle.width = width;
+-                    c->floating_rectangle.height = height;
++                    c->floating_rectangle.width = w;
++                    c->floating_rectangle.height = h;
+                     arrange(m, d);
+                 } else {
+-                    c->floating_rectangle = (xcb_rectangle_t) {x, y, width, height};
+-                    window_move_resize(win, x, y, width, height);
++                    if (oldw == w) {
++                        c->floating_rectangle.x = x;
++                        c->floating_rectangle.width = w;
++                    }
++                    if (oldh == h) {
++                        c->floating_rectangle.y = y;
++                        c->floating_rectangle.height = h;
++                    }
++                    window_move_resize(win, c->floating_rectangle.x,
++                                            c->floating_rectangle.y,
++                                            c->floating_rectangle.width,
++                                            c->floating_rectangle.height);
+                 }
+             }
+             break;
+diff --git a/query.c b/query.c
+index 13c3910..f4bdb84 100644
+--- a/query.c
++++ b/query.c
+@@ -91,7 +91,7 @@ void query_tree(desktop_t *d, node_t *n, char *rsp, unsigned int depth)
+ 
+     if (is_leaf(n)) {
+         client_t *c = n->client;
+-        snprintf(line, sizeof(line), "%c %s 0x%X %u %ux%u%+i%+i %c %c%c%c%c%c%c%c%c", (n->birth_rotation == 90 ? 'a' : (n->birth_rotation == 270 ? 'c' : 'm')), c->class_name, c->window, c->border_width, c->floating_rectangle.width, c->floating_rectangle.height, c->floating_rectangle.x, c->floating_rectangle.y, (n->split_dir == DIR_UP ? 'U' : (n->split_dir == DIR_RIGHT ? 'R' : (n->split_dir == DIR_DOWN ? 'D' : 'L'))), (c->floating ? 'f' : '-'), (c->pseudo_tiled ? 'd' : '-'), (c->fullscreen ? 'F' : '-'), (c->urgent ? 'u' : '-'), (c->locked ? 'l' : '-'), (c->sticky ? 's' : '-'), (c->private ? 'i' : '-'), (n->split_mode ? 'p' : '-'));
++        snprintf(line, sizeof(line), "%c %s %s 0x%X %u %ux%u%+i%+i %c %c%c%c%c%c%c%c%c", (n->birth_rotation == 90 ? 'a' : (n->birth_rotation == 270 ? 'c' : 'm')), c->class_name, c->instance_name, c->window, c->border_width, c->floating_rectangle.width, c->floating_rectangle.height, c->floating_rectangle.x, c->floating_rectangle.y, (n->split_dir == DIR_UP ? 'U' : (n->split_dir == DIR_RIGHT ? 'R' : (n->split_dir == DIR_DOWN ? 'D' : 'L'))), (c->floating ? 'f' : '-'), (c->pseudo_tiled ? 'd' : '-'), (c->fullscreen ? 'F' : '-'), (c->urgent ? 'u' : '-'), (c->locked ? 'l' : '-'), (c->sticky ? 's' : '-'), (c->private ? 'i' : '-'), (n->split_mode ? 'p' : '-'));
+     } else {
+         snprintf(line, sizeof(line), "%c %c %lf", (n->split_type == TYPE_HORIZONTAL ? 'H' : 'V'), (n->birth_rotation == 90 ? 'a' : (n->birth_rotation == 270 ? 'c' : 'm')), n->split_ratio);
+     }
+diff --git a/restore.c b/restore.c
+index f136156..83c7f5d 100644
+--- a/restore.c
++++ b/restore.c
+@@ -138,7 +138,7 @@ void restore_tree(char *file_path)
+                 client_t *c = make_client(XCB_NONE);
+                 num_clients++;
+                 char floating, pseudo_tiled, fullscreen, urgent, locked, sticky, private, sd, sm, end = 0;
+-                sscanf(line + level, "%c %s %X %u %hux%hu%hi%hi %c %c%c%c%c%c%c%c%c %c", &br, c->class_name, &c->window, &c->border_width, &c->floating_rectangle.width, &c->floating_rectangle.height, &c->floating_rectangle.x, &c->floating_rectangle.y, &sd, &floating, &pseudo_tiled, &fullscreen, &urgent, &locked, &sticky, &private, &sm, &end);
++                sscanf(line + level, "%c %s %s %X %u %hux%hu%hi%hi %c %c%c%c%c%c%c%c%c %c", &br, c->class_name, c->instance_name, &c->window, &c->border_width, &c->floating_rectangle.width, &c->floating_rectangle.height, &c->floating_rectangle.x, &c->floating_rectangle.y, &sd, &floating, &pseudo_tiled, &fullscreen, &urgent, &locked, &sticky, &private, &sm, &end);
+                 c->floating = (floating == '-' ? false : true);
+                 c->pseudo_tiled = (pseudo_tiled == '-' ? false : true);
+                 c->fullscreen = (fullscreen == '-' ? false : true);
+diff --git a/rule.c b/rule.c
+index e886343..5a5c600 100644
+--- a/rule.c
++++ b/rule.c
+@@ -153,6 +153,7 @@ void apply_rules(xcb_window_t win, rule_consequence_t *csq)
+                 csq->focus = false;
+             } else if (a == ewmh->_NET_WM_WINDOW_TYPE_DIALOG) {
+                 csq->floating = true;
++                csq->center = true;
+             } else if (a == ewmh->_NET_WM_WINDOW_TYPE_DOCK || a == ewmh->_NET_WM_WINDOW_TYPE_DESKTOP || a == ewmh->_NET_WM_WINDOW_TYPE_NOTIFICATION) {
+                 csq->manage = false;
+                 if (a == ewmh->_NET_WM_WINDOW_TYPE_DESKTOP)
+@@ -181,6 +182,10 @@ void apply_rules(xcb_window_t win, rule_consequence_t *csq)
+                 && size_hints.min_width == size_hints.max_width
+                 && size_hints.min_height == size_hints.max_height)
+             csq->floating = true;
++        csq->min_width = size_hints.min_width;
++        csq->max_width = size_hints.max_width;
++        csq->min_height = size_hints.min_height;
++        csq->max_height = size_hints.max_height;
+     }
+ 
+     xcb_window_t transient_for = XCB_NONE;
+@@ -265,10 +270,12 @@ void parse_rule_consequence(int fd, rule_consequence_t *csq)
+ void parse_key_value(char *key, char *value, rule_consequence_t *csq)
+ {
+     bool v;
+-    if (streq("desktop", key)) {
+-        snprintf(csq->desktop_desc, sizeof(csq->desktop_desc), "%s", value);
+-    } else if (streq("monitor", key)) {
++    if (streq("monitor", key)) {
+         snprintf(csq->monitor_desc, sizeof(csq->monitor_desc), "%s", value);
++    } else if (streq("desktop", key)) {
++        snprintf(csq->desktop_desc, sizeof(csq->desktop_desc), "%s", value);
++    } else if (streq("window", key)) {
++        snprintf(csq->node_desc, sizeof(csq->node_desc), "%s", value);
+     } else if (parse_bool(value, &v)) {
+         if (streq("floating", key))
+             csq->floating = v;
+diff --git a/tree.c b/tree.c
+index b9c7950..0d2418b 100644
+--- a/tree.c
++++ b/tree.c
+@@ -107,7 +107,7 @@ void apply_layout(monitor_t *m, desktop_t *d, node_t *n, xcb_rectangle_t rect, x
+                 fence = rect.width * n->split_ratio;
+                 first_rect = (xcb_rectangle_t) {rect.x, rect.y, fence, rect.height};
+                 second_rect = (xcb_rectangle_t) {rect.x + fence, rect.y, rect.width - fence, rect.height};
+-            } else if (n->split_type == TYPE_HORIZONTAL) {
++            } else {
+                 fence = rect.height * n->split_ratio;
+                 first_rect = (xcb_rectangle_t) {rect.x, rect.y, rect.width, fence};
+                 second_rect = (xcb_rectangle_t) {rect.x, rect.y + fence, rect.width, rect.height - fence};
+@@ -365,9 +365,10 @@ node_t *make_node(void)
+ client_t *make_client(xcb_window_t win)
+ {
+     client_t *c = malloc(sizeof(client_t));
++    c->window = win;
+     snprintf(c->class_name, sizeof(c->class_name), "%s", MISSING_VALUE);
++    snprintf(c->instance_name, sizeof(c->instance_name), "%s", MISSING_VALUE);
+     c->border_width = BORDER_WIDTH;
+-    c->window = win;
+     c->pseudo_tiled = c->floating = c->fullscreen = false;
+     c->locked = c->sticky = c->urgent = c->private = c->icccm_focus = false;
+     xcb_icccm_get_wm_protocols_reply_t protocols;
+@@ -791,6 +792,17 @@ void flip_tree(node_t *n, flip_t flp)
+     flip_tree(n->second_child, flp);
+ }
+ 
++void equalize_tree(node_t *n)
++{
++    if (n == NULL || n->vacant) {
++        return;
++    } else {
++        n->split_ratio = split_ratio;
++        equalize_tree(n->first_child);
++        equalize_tree(n->second_child);
++    }
++}
++
+ int balance_tree(node_t *n)
+ {
+     if (n == NULL || n->vacant) {
+diff --git a/tree.h b/tree.h
+index 3a82a2e..a745acd 100644
+--- a/tree.h
++++ b/tree.h
+@@ -60,6 +60,7 @@ void rotate_brother(node_t *n);
+ void unrotate_tree(node_t *n, int rot);
+ void unrotate_brother(node_t *n);
+ void flip_tree(node_t *n, flip_t flp);
++void equalize_tree(node_t *n);
+ int balance_tree(node_t *n);
+ void unlink_node(monitor_t *m, desktop_t *d, node_t *n);
+ void remove_node(monitor_t *m, desktop_t *d, node_t *n);
+diff --git a/types.h b/types.h
+index 6495f0a..c480042 100644
+--- a/types.h
++++ b/types.h
+@@ -144,6 +144,7 @@ typedef struct {
+ typedef struct {
+     xcb_window_t window;
+     char class_name[SMALEN];
++    char instance_name[SMALEN];
+     unsigned int border_width;
+     bool pseudo_tiled;
+     bool floating;
+@@ -155,6 +156,10 @@ typedef struct {
+     bool icccm_focus;
+     xcb_rectangle_t floating_rectangle;
+     xcb_rectangle_t tiled_rectangle;
++    uint16_t min_width;
++    uint16_t max_width;
++    uint16_t min_height;
++    uint16_t max_height;
+     xcb_atom_t wm_state[MAX_STATE];
+     int num_states;
+ } client_t;
+@@ -252,8 +257,13 @@ struct rule_t {
+ typedef struct {
+     char class_name[SMALEN];
+     char instance_name[SMALEN];
+-    char desktop_desc[MAXLEN];
+     char monitor_desc[MAXLEN];
++    char desktop_desc[MAXLEN];
++    char node_desc[MAXLEN];
++    uint16_t min_width;
++    uint16_t max_width;
++    uint16_t min_height;
++    uint16_t max_height;
+     bool pseudo_tiled;
+     bool floating;
+     bool fullscreen;
+diff --git a/window.c b/window.c
+index 4b1ed3f..dea161a 100644
+--- a/window.c
++++ b/window.c
+@@ -65,6 +65,7 @@ void manage_window(xcb_window_t win, rule_consequence_t *csq, int fd)
+ {
+     monitor_t *m = mon;
+     desktop_t *d = mon->desk;
++    node_t *f = mon->desk->focus;
+ 
+     parse_rule_consequence(fd, csq);
+ 
+@@ -79,12 +80,21 @@ void manage_window(xcb_window_t win, rule_consequence_t *csq, int fd)
+ 
+     PRINTF("manage %X\n", win);
+ 
+-    if (csq->desktop_desc[0] != '\0') {
++    if (csq->node_desc[0] != '\0') {
++        coordinates_t ref = {m, d, f};
++        coordinates_t trg = {NULL, NULL, NULL};
++        if (node_from_desc(csq->node_desc, &ref, &trg)) {
++            m = trg.monitor;
++            d = trg.desktop;
++            f = trg.node;
++        }
++    } else if (csq->desktop_desc[0] != '\0') {
+         coordinates_t ref = {m, d, NULL};
+         coordinates_t trg = {NULL, NULL, NULL};
+         if (desktop_from_desc(csq->desktop_desc, &ref, &trg)) {
+             m = trg.monitor;
+             d = trg.desktop;
++            f = trg.desktop->focus;
+         }
+     } else if (csq->monitor_desc[0] != '\0') {
+         coordinates_t ref = {m, NULL, NULL};
+@@ -92,16 +102,22 @@ void manage_window(xcb_window_t win, rule_consequence_t *csq, int fd)
+         if (monitor_from_desc(csq->monitor_desc, &ref, &trg)) {
+             m = trg.monitor;
+             d = trg.monitor->desk;
++            f = trg.monitor->desk->focus;
+         }
+     }
+ 
+     if (csq->sticky) {
+         m = mon;
+         d = mon->desk;
++        f = mon->desk->focus;
+     }
+ 
+     client_t *c = make_client(win);
+     update_floating_rectangle(c);
++    c->min_width = csq->min_width;
++    c->max_width = csq->max_width;
++    c->min_height = csq->min_height;
++    c->max_height = csq->max_height;
+     monitor_t *mm = monitor_from_client(c);
+     embrace_client(mm, c);
+     translate_client(mm, m, c);
+@@ -109,13 +125,14 @@ void manage_window(xcb_window_t win, rule_consequence_t *csq, int fd)
+         window_center(m, c);
+ 
+     snprintf(c->class_name, sizeof(c->class_name), "%s", csq->class_name);
++    snprintf(c->instance_name, sizeof(c->instance_name), "%s", csq->instance_name);
+ 
+     csq->floating = csq->floating || d->floating;
+ 
+     node_t *n = make_node();
+     n->client = c;
+ 
+-    insert_node(m, d, n, d->focus);
++    insert_node(m, d, n, f);
+ 
+     disable_floating_atom(c->window);
+     set_pseudo_tiled(n, csq->pseudo_tiled);
+@@ -519,12 +536,35 @@ void update_floating_rectangle(client_t *c)
+ 
+     if (geo != NULL)
+         c->floating_rectangle = (xcb_rectangle_t) {geo->x, geo->y, geo->width, geo->height};
+-    else
+-        c->floating_rectangle = (xcb_rectangle_t) {0, 0, 32, 24};
+ 
+     free(geo);
+ }
+ 
++void restrain_floating_width(client_t *c, int *width)
++{
++    if (*width < 1)
++        *width = 1;
++    if (c->min_width > 0 && *width < c->min_width)
++        *width = c->min_width;
++    else if (c->max_width > 0 && *width > c->max_width)
++        *width = c->max_width;
++}
++
++void restrain_floating_height(client_t *c, int *height)
++{
++    if (*height < 1)
++        *height = 1;
++    if (c->min_height > 0 && *height < c->min_height)
++        *height = c->min_height;
++    else if (c->max_height > 0 && *height > c->max_height)
++        *height = c->max_height;
++}
++
++void restrain_floating_size(client_t *c, int *width, int *height)
++{
++    restrain_floating_width(c, width);
++    restrain_floating_height(c, height);
++}
+ 
+ void query_pointer(xcb_window_t *win, xcb_point_t *pt)
+ {
+diff --git a/window.h b/window.h
+index 12bc117..dd000a4 100644
+--- a/window.h
++++ b/window.h
+@@ -54,6 +54,9 @@ void enable_floating_atom(xcb_window_t win);
+ void disable_floating_atom(xcb_window_t win);
+ uint32_t get_border_color(client_t *c, bool focused_window, bool focused_monitor);
+ void update_floating_rectangle(client_t *c);
++void restrain_floating_width(client_t *c, int *width);
++void restrain_floating_height(client_t *c, int *height);
++void restrain_floating_size(client_t *c, int *width, int *height);
+ void query_pointer(xcb_window_t *win, xcb_point_t *pt);
+ bool window_focus(xcb_window_t win);
+ void window_border_width(xcb_window_t win, uint32_t bw);
