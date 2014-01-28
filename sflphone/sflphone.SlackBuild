@@ -90,8 +90,7 @@ CXXFLAGS="$SLKCFLAGS" \
   --localstatedir=/var \
   --mandir=/usr/man \
   --docdir=/usr/doc/$PRGNAM-$VERSION \
-  --enable-video \
-  --build=$ARCH-slackware-linux
+  $ENABLE_VIDEO --build=$ARCH-slackware-linux
 
 make
 make install DESTDIR=$PKG
