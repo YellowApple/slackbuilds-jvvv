@@ -1,0 +1,19 @@
+# HOW TO EDIT THIS FILE:
+# The "handy ruler" below makes it easier to edit a package description.
+# Line up the first '|' above the ':' following the base package name, and
+# the '|' on the right side marks the last column you can put a character in.
+# You must make exactly 11 lines for the formatting to be correct.  It's also
+# customary to leave one space after the ':' except on otherwise blank lines.
+
+       |-----handy-ruler------------------------------------------------------|
+ucommon: ucommon (C++ Application Framework)
+ucommon: GNU uCommon C++ is meant as a very light-weight C++ library to
+ucommon: facilitate using C++ design patterns even for very deeply embedded
+ucommon: applications, such as for systems using uclibc along with posix
+ucommon: threading support.  For this reason, uCommon disables language
+ucommon: features that consume memory or introduce runtime overhead, such
+ucommon: as rtti and exception handling, and assumes one will mostly be
+ucommon: linking applications with other pure C based libraries rather than
+ucommon: using the overhead of the standard C++ library and other class
+ucommon: frameworks.
+ucommon: web page: http://www.gnu.org/software/commoncpp/
