@@ -55,6 +55,12 @@ else
   LIBDIRSUFFIX=""
 fi
 
+if [ "${WITH_VIDEO:-no}" = "yes" ]; then
+  ENABLE_VIDEO="--enable-video"
+else
+  ENABLE_VIDEO=""
+fi
+
 set -e
 
 rm -rf $PKG
