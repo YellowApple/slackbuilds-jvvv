@@ -1,0 +1,11 @@
+ccrtp (GNU implementation of RTP)
+
+ccRTP is a C++ framework for developing applications based on the
+Real-Time Transport Protocol (RTP) from the IETF. It is based on
+Common C++ and provides a full RTP/RTCP stack for sending and
+receiving of realtime data using send and receive packet queues.
+ccRTP supports unicast, multi-unicast and multicast, manages multiple
+sources, handles RTCP automatically, supports different threading
+models and is generic to underlying network and transport protocols.
+
+ccrtp home: http://wiki.gnutelephony.org/index.php/GNU_ccRTP

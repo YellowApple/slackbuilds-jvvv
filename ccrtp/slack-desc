@@ -1,0 +1,19 @@
+# HOW TO EDIT THIS FILE:
+# The "handy ruler" below makes it easier to edit a package description.  Line
+# up the first '|' above the ':' following the base package name, and the '|'
+# on the right side marks the last column you can put a character in.  You must
+# make exactly 11 lines for the formatting to be correct.  It's also
+# customary to leave one space after the ':'.
+
+     |-----handy-ruler------------------------------------------------------|
+ccrtp: ccrtp (GNU implementation of RTP)
+ccrtp:
+ccrtp: ccRTP is a C++ framework for developing applications based on the
+ccrtp: Real-Time Transport Protocol (RTP) from the IETF. It is based on
+ccrtp: Common C++ and provides a full RTP/RTCP stack for sending and
+ccrtp: receiving of realtime data using send and receive packet queues.
+ccrtp: ccRTP supports unicast, multi-unicast and multicast, manages multiple
+ccrtp: sources, handles RTCP automatically, supports different threading
+ccrtp: models and is generic to underlying network and transport protocols.
+ccrtp:
+ccrtp: ccrtp home: http://wiki.gnutelephony.org/index.php/GNU_ccRTP
