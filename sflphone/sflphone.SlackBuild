@@ -107,6 +107,8 @@ cd build
     -DCMAKE_BUILD_TYPE=Release ..
   make 
   make install DESTDIR=$PKG
+
+cd ../..
   
 find $PKG -print0 | xargs -0 file | grep -e "executable" -e "shared object" | grep ELF \
   | cut -f 1 -d : | xargs strip --strip-unneeded 2> /dev/null || true
