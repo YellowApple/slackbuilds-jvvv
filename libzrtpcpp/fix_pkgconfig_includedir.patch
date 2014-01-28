@@ -1,0 +1,12 @@
+diff -Naur a/CMakeLists.txt b/CMakeLists.txt
+--- a/CMakeLists.txt	2013-07-01 05:10:34.000000000 -0400
++++ b/CMakeLists.txt	2014-01-27 22:20:04.766913547 -0500
+@@ -149,7 +149,7 @@
+ set(prefix ${CMAKE_INSTALL_PREFIX})
+ set(exec_prefix ${prefix}/bin)
+ set(libdir ${prefix}/${LIBDIRNAME})
+-set(includedir ${prefix}/include)
++set(includedir ${prefix}/include/${PACKAGE})
+ set(PACKAGE pkgconfig)
+ configure_file(libzrtpcpp.pc.cmake ${CMAKE_CURRENT_BINARY_DIR}/lib${zrtplib}.pc @ONLY)
+ 
