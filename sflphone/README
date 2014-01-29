@@ -1,3 +1,4 @@
 SFLphone is an open-source SIP/IAX2 compatible enterprise-class softphone, published under the GNU Public License 3.
 
 Video support can be added with WITH_VIDEO=yes option. This requires ffmpeg.
+Pulseaudio support can be added with WITH_PULSE=yes option. This requires pulseaudio.
