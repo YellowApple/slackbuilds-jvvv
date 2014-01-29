@@ -5,6 +5,6 @@ DOWNLOAD="https://projects.savoirfairelinux.com/attachments/download/9198/sflpho
 MD5SUM="63602443176da2c572d98d1617233c24"
 DOWNLOAD_x86_64=""
 MD5SUM_x86_64=""
-REQUIRES="ccrtp gsm libdbus-c++ libzrtpcpp pulseaudio speex ucommon"
+REQUIRES="ccrtp gsm libdbus-c++ libzrtpcpp speex ucommon"
 MAINTAINER="John Vogel"
 EMAIL="jvogel4@stny.rr.com"
