@@ -76,6 +76,7 @@ find -L . \
 
 # add monitor option for ordering and selective inclusion
 patch -p1 < $CWD/patches/bar-monitor-option.patch
+# adjust CFLAGS in Makefile to accept SLKCFLAGS
 patch -p1 < $CWD/patches/bar-Makefile-CFLAGS.patch
 
 CFLAGS="$SLKCFLAGS" \
