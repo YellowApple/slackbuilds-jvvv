@@ -4,7 +4,7 @@
 
 # Derived from a SlackBuild by Eric Hameleers.
 # Copyright (c) 2006 Eric Hameleers <alien@slackware.com>
-# Copyright 2014 John Vogel <where you live>
+# Copyright 2014 John Vogel Corning, New York
 # All rights reserved.
 #
 # Redistribution and use of this script, with or without modification, is
@@ -57,7 +57,7 @@ else
   LIBDIRSUFFIX=""
 fi
 
-set -e # Exit on most errors
+set -e
 
 rm -rf $PKG
 mkdir -p $TMP $PKG $OUTPUT
@@ -90,7 +90,6 @@ CXXFLAGS="$SLKCFLAGS" \
 
 make
 make install DESTDIR=$PKG
-#make install-info DESTDIR=$PKG
 
 $(cd doc; \
   for d in $( find man -type d ) ; do mkdir $PKG/usr/$d ; done
