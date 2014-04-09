@@ -101,9 +101,45 @@ CXXFLAGS="$SLKCFLAGS" \
 make
 make install DESTDIR=$PKG
 
-cd ../kde
-mkdir -p build
+cd ..
+
+if [ "${BUILD_GTK:-yes}" = "yes" ]; then
+
+cd gnome
+if [ -f Makefile ]; then
+	make distclean
+fi
+
+mkdir build
 cd build
+
+CFLAGS="SLKCFLAGS" \
+CXXFLAGS="SLKCFLAGS" \
+../configure \
+  --prefix=/usr \
+  --libdir=/usr/lib${LIBDIRSUFFIX} \
+  --sysconfdir=/etc \
+  --localstatedir=/var \
+  --mandir=/usr/man \
+  --docdir=/usr/doc/$PRGNAM-$VERSION \
+  $ENABLE_VIDEO --build=$ARCH-slackware-linux
+
+make
+make insall DESTDIR=$PKG
+
+cd ../..
+
+fi
+
+if [ "${BUILD_KDE:-yes}" = "yes" ]; then
+
+# ENABLE VIDEO breaks kde build. looks like a misiing header in one of the src/lib/video*.[cpp|h]
+#if [ -n $ENABLE_VIDEO ]; then
+#  ENABLE_VIDEO="-DENABLE_VIDEO:BOOL=true"
+#fi
+
+mkdir -p kde/build
+cd kde/build
   cmake \
     -DCMAKE_C_FLAGS:STRING="$SLKCFLAGS" \
     -DCMAKE_CXX_FLAGS:STRING="$SLKCFLAGS" \
@@ -111,10 +147,13 @@ cd build
     -DLIB_SUFFIX=${LIBDIRSUFFIX} \
     -DMAN_INSTALL_DIR=/usr/man \
     -DCMAKE_BUILD_TYPE=Release ..
+#    -DCMAKE_BUILD_TYPE=Release $ENABLE_VIDEO ..
   make 
   make install DESTDIR=$PKG
 
 cd ../..
+
+fi
   
 find $PKG -print0 | xargs -0 file | grep -e "executable" -e "shared object" | grep ELF \
   | cut -f 1 -d : | xargs strip --strip-unneeded 2> /dev/null || true
