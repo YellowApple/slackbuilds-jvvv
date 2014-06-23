@@ -1,0 +1,5 @@
+xwinfo - Print window informations
+
+xwinfo prints the informations requested by the given options regarding the
+window IDs given as argument.
+
