@@ -5,6 +5,7 @@ These are SlackBuilds that I maintain.
 
 #### Available at http://slackbuilds.org:
 
+* bar
 * bspwm
 * dvdbackup
 * sutils
@@ -15,6 +16,7 @@ These are SlackBuilds that I maintain.
 
 * ccrtp
 * dirvish (forked from vbatts)
+* fakechroot
 * input-wacom
 * libzrtpcpp
 * perl-time-parsedate (forked from vbatts)
@@ -22,4 +24,7 @@ These are SlackBuilds that I maintain.
 * requiredbuilder
 * sflphone
 * ucommon
+* xdo
+* xlsw
+* xwinfo
 * xf86-input-wacom
