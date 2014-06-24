@@ -1,7 +1,7 @@
 PRGNAM="bspwm"
 VERSION="0.8.9"
 HOMEPAGE="https://github.com/baskerville/bspwm"
-DOWNLOAD="https://github.com/baskerville/bspwm/archive/${VERSION}.tar.gz"
+DOWNLOAD="https://github.com/baskerville/bspwm/archive/0.8.9.tar.gz"
 MD5SUM="6f7967a4b64df468f2f29964b77aa9c3"
 DOWNLOAD_x86_64=""
 MD5SUM_x86_64=""
