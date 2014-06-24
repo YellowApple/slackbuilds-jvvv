@@ -1,0 +1,127 @@
+diff --git a/Makefile b/Makefile
+index cf23e5a..657200a 100644
+--- a/Makefile
++++ b/Makefile
+@@ -1,23 +1,24 @@
+ VERSION = 0.1
+ 
+-CC      = gcc
+-LIBS    = -lm -lxcb -lxcb-icccm -lxcb-ewmh
+-CFLAGS  = -std=c99 -pedantic -Wall -Wextra -I$(PREFIX)/include
++CC      ?= gcc
++LIBS     = -lm -lxcb -lxcb-icccm -lxcb-ewmh
++CFLAGS  += -std=c99 -pedantic -Wall -Wextra -I$(PREFIX)/include
+ CFLAGS  += -D_POSIX_C_SOURCE=200112L -DVERSION=\"$(VERSION)\"
+-LDFLAGS = -L$(PREFIX)/lib
++LDFLAGS += -L$(PREFIX)/lib
+ 
+ PREFIX    ?= /usr/local
+-BINPREFIX = $(PREFIX)/bin
++BINPREFIX  = $(PREFIX)/bin
+ 
+-SRC = xlsw.c helpers.c
+-HDR = $(SRC:.c=.h)
++SRC = $(wildcard *.c)
+ OBJ = $(SRC:.c=.o)
+ 
+ all: CFLAGS += -Os
+ all: LDFLAGS += -s
+ all: xlsw
+ 
+-$(OBJ): $(SRC) $(HDR) Makefile
++include Sourcedeps
++
++$(OBJ): Makefile
+ 
+ .c.o:
+ 	$(CC) $(CFLAGS) -c -o $@ $<
+@@ -27,8 +28,7 @@ xlsw: $(OBJ)
+ 
+ install:
+ 	mkdir -p "$(DESTDIR)$(BINPREFIX)"
+-	cp xlsw "$(DESTDIR)$(BINPREFIX)"
+-	chmod 755 "$(DESTDIR)$(BINPREFIX)/xlsw"
++	cp -p xlsw "$(DESTDIR)$(BINPREFIX)"
+ 
+ uninstall:
+ 	rm -f $(DESTDIR)$(BINPREFIX)/xlsw
+diff --git a/README.md b/README.md
+index e8185fa..661c44b 100644
+--- a/README.md
++++ b/README.md
+@@ -15,16 +15,16 @@ Each line holds the following informations:
+     WID  FLAGS  CLASS/INSTANCE  TITLE
+ 
+ # Flags
+-- `o` — Override redirect.
+ - `u` — Unmapped/unviewable.
+ - `i` — Input only.
++- `o` — Override redirect.
+ 
+ # Example Output
+ 
+     0x0400335  ---  URxvt/urxvt  terminal ~/bin
+       0x040033A  ---  NA           NA
+-        0x060013F  o-i  NA           NA
+-    0x0600004  -u-  NA           NA
+-    0x1200001  -u-  NA           xcompmgr
++        0x060013F  -io  NA           NA
++    0x0600004  u--  NA           NA
++    0x1200001  u--  NA           xcompmgr
+     0x0E00005  ---  dzen/dzen2   dzen title
+-    0x0C00001  -ui  NA           NA
++    0x0C00001  ui-  NA           NA
+diff --git a/Sourcedeps b/Sourcedeps
+new file mode 100644
+index 0000000..68aa067
+--- /dev/null
++++ b/Sourcedeps
+@@ -0,0 +1,2 @@
++helpers.o: helpers.c helpers.h
++xlsw.o: xlsw.c helpers.h xlsw.h
+diff --git a/xlsw.c b/xlsw.c
+index cc92ba1..e111e5e 100644
+--- a/xlsw.c
++++ b/xlsw.c
+@@ -114,26 +114,34 @@ void print_info(xcb_window_t win, int depth)
+         window_class = war->_class;
+         free(war);
+     }
+-    printf("%*s0x%07X  %c%c%c  %-11s  %s\n", depth, "", win, (override_redirect ? 'o' : '-'), (map_state == XCB_MAP_STATE_VIEWABLE ? '-' : 'u'), (window_class == XCB_WINDOW_CLASS_INPUT_OUTPUT ? '-' : 'i'), class_instance, title);
++    printf("%*s0x%07X  %c%c%c  %-11s  %s\n", depth, "", win, (map_state == XCB_MAP_STATE_VIEWABLE ? '-' : 'u'), (window_class == XCB_WINDOW_CLASS_INPUT_OUTPUT ? '-' : 'i'), (override_redirect ? 'o' : '-'), class_instance, title);
+ }
+ 
+ bool get_window_title(xcb_window_t win, char *title, size_t len) {
+     xcb_ewmh_get_utf8_strings_reply_t ewmh_txt_prop;
+     xcb_icccm_get_text_property_reply_t icccm_txt_prop;
+     ewmh_txt_prop.strings = icccm_txt_prop.name = NULL;
++    title[0] = '\0';
+     if (xcb_ewmh_get_wm_name_reply(ewmh, xcb_ewmh_get_wm_name(ewmh, win), &ewmh_txt_prop, NULL) == 1 || xcb_icccm_get_wm_name_reply(dpy, xcb_icccm_get_wm_name(dpy, win), &icccm_txt_prop, NULL) == 1) {
+-        char *src;
+-        size_t title_len;
++        char *src = NULL;
++        size_t title_len = 0;
+         if (ewmh_txt_prop.strings != NULL) {
+             src = ewmh_txt_prop.strings;
+             title_len = MIN(len, ewmh_txt_prop.strings_len);
+-        } else {
++        } else if (icccm_txt_prop.name != NULL) {
+             src = icccm_txt_prop.name;
+             title_len = MIN(len, icccm_txt_prop.name_len);
+         }
+-        strncpy(title, src, title_len);
+-        title[title_len] = '\0';
+-        return true;
++        if (src != NULL) {
++            strncpy(title, src, title_len);
++            title[title_len] = '\0';
++            return true;
++        }
++        if (ewmh_txt_prop.strings != NULL) {
++            xcb_ewmh_get_utf8_strings_reply_wipe(&ewmh_txt_prop);
++        } else if (icccm_txt_prop.name != NULL) {
++            xcb_icccm_get_text_property_reply_wipe(&icccm_txt_prop);
++        }
+     }
+     return false;
+ }

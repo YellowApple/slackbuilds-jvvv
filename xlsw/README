@@ -1,0 +1,7 @@
+xlsw - List child window info
+
+xlsw outputs the list of the children window informations for the given window
+identifiers (use the root window if none are given).
+
+homepage: https://github.com/baskerville/xlsw
+
