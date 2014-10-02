@@ -5,6 +5,7 @@ These are SlackBuilds that I maintain.
 
 #### Available at http://slackbuilds.org:
 
+* avidemux
 * bar
 * bspwm
 * dvdbackup
@@ -28,10 +29,6 @@ These are SlackBuilds that I maintain.
 * xlsw
 * xwinfo
 * xf86-input-wacom
-
-#### Need to be added:
-
-* avidemux
 
 
 Last updated 20141002
