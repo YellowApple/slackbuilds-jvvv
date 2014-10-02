@@ -29,4 +29,9 @@ These are SlackBuilds that I maintain.
 * xwinfo
 * xf86-input-wacom
 
+#### Need to be added:
+
+* avidemux
+
+
 Last updated 20141002
