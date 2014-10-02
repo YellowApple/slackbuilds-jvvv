@@ -28,3 +28,5 @@ These are SlackBuilds that I maintain.
 * xlsw
 * xwinfo
 * xf86-input-wacom
+
+Last updated 20141002
