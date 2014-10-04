@@ -31,4 +31,4 @@ These are SlackBuilds that I maintain.
 * xf86-input-wacom
 
 
-Last updated 20141002
+Last updated 20141004
