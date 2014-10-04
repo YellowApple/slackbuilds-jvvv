@@ -33,5 +33,6 @@ These are SlackBuilds that I maintain.
 #### For future additions:
 
 * dkms
+* s6 and dependencies
 
 Last updated 20141004
