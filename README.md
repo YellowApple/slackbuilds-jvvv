@@ -30,5 +30,8 @@ These are SlackBuilds that I maintain.
 * xwinfo
 * xf86-input-wacom
 
+#### For future additions:
+
+* dkms
 
 Last updated 20141004
