@@ -34,5 +34,6 @@ These are SlackBuilds that I maintain.
 
 * dkms
 * s6 and dependencies
+* musl-cross
 
 Last updated 20141004
