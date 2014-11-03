@@ -1,0 +1,122 @@
+mpv
+===
+
+mpv is a movie player based on MPlayer and mplayer2. It shares some features
+with the former projects while introducing many more. It supports a wide
+variety of video file formats, audio and video codecs, and subtitle types.
+
+mpv homepage: http://mpv.io/
+
+- FFmpeg
+- libass
+- Lua - optional, but required for the OSC pseudo-GUI
+
+- OpenSSL (has to be explicitly enabled when compiling ffmpeg)
+- libx264/libmp3lame/libfdk-aac if you want to use encoding (has to be
+  explicitly enabled when compiling ffmpeg)
+
+# slack def:
+    --disable-dvdread   disable dvdread support [autodetect]
+    --enable-cdda       enable cdda support (libcdio) [disable]
+    --disable-mpg123    disable mpg123 support [autodetect]
+    --enable-sdl1       enable SDL (1.x) [disable]
+    --disable-jpeg      disable JPEG support [autodetect]
+    --disable-x11       disable X11 [autodetect]
+    --disable-xss       disable Xss screensaver extensions [autodetect]
+    --disable-xext      disable X extensions [autodetect]
+    --disable-xv        disable Xv video output [autodetect]
+    --disable-xinerama  disable Xinerama [autodetect]
+    --disable-xrandr    disable Xrandr [autodetect]
+    --disable-gl        disable OpenGL video outputs [autodetect]
+    --disable-alsa      disable ALSA audio output [autodetect]
+
+# libs not slack def and not on sbo:
+    --disable-iconv     disable iconv [autodetect]
+    --disable-libguess  disable libguess support [autodetect]
+
+# need more info:
+    --disable-shm       disable shm [autodetect]
+    --disable-libsmbclient
+                        disable Samba support [autodetect]
+    --disable-libass-osd
+                        disable libass OSD support [autodetect]
+    --disable-encoding  disable Encoding [autodetect]
+    --enable-joystick   enable joystick [disable]
+    --disable-libbs2b   disable libbs2b audio filter support [autodetect]
+    --disable-lcms2     disable LCMS2 support [autodetect]
+    --disable-vapoursynth
+                        disable VapourSynth filter bridge [autodetect]
+    --disable-cocoa     disable Cocoa [autodetect]
+    --disable-gl-cocoa  disable OpenGL Cocoa Backend [autodetect]
+    --disable-gl-x11    disable OpenGL X11 Backend [autodetect]
+    --disable-gl-wayland
+                        disable OpenGL Wayland Backend [autodetect]
+    --disable-vdpau-gl-x11
+                        disable VDPAU with OpenGL/X11 [autodetect]
+    --disable-vaapi-vpp
+                        disable VAAPI VPP [autodetect]
+    --disable-vaapi-glx
+                        disable VAAPI GLX [autodetect]
+    --disable-caca      disable CACA [autodetect]
+    --disable-dvb       disable DVB [autodetect]
+    --disable-dvbin     disable DVB input module [autodetect]
+    --disable-direct3d  disable Direct3D support [autodetect]
+    --disable-vda-hwaccel
+                        disable libavcodec VDA hwaccel [autodetect]
+    --disable-vda-gl    disable VDA with OpenGL [autodetect]
+
+    --disable-tv        disable TV interface [autodetect]
+    --disable-tv-v4l2   disable Video4Linux2 TV interface [autodetect]
+    --disable-libv4l2   disable libv4l2 support [autodetect]
+    --disable-pvr       disable Video4Linux2 MPEG PVR interface [autodetect]
+    --disable-audio-input
+                        disable audio input support [autodetect]
+
+    --disable-rsound    disable RSound audio output [autodetect]
+    --enable-sndio      enable sndio audio input/output [disable]
+    --enable-portaudio  enable PortAudio audio output [disable]
+    --disable-coreaudio
+                        disable CoreAudio audio output [autodetect]
+    --disable-dsound    disable DirectSound audio output [autodetect]
+    --disable-wasapi    disable WASAPI audio output [autodetect]
+
+    --disable-cplayer   disable mpv CLI player [autodetect]
+
+# aren't these in ffmpeg?:
+    --disable-libavresample
+                        disable libavresample [autodetect]
+    --disable-libswresample
+                        disable libswresample [autodetect]
+    --disable-libavfilter
+                        disable libavfilter [autodetect]
+    --disable-libavdevice
+                        disable libavdevice [autodetect]
+    --disable-libpostproc
+                        disable libpostproc [autodetect]
+
+# libs not slack but on sbo:
+    --disable-libquvi   disable libquvi support [autodetect]
+    --disable-libass    disable SSA/ASS support [autodetect]
+    --disable-lirc      disable lirc [autodetect]
+    --disable-libbluray
+                        disable Bluray support [autodetect]
+    --disable-dvdnav    disable dvdnav support [autodetect]
+    --disable-enca      disable ENCA support [autodetect]
+    --disable-ladspa    disable LADSPA plugin support [autodetect]
+    --enable-sdl2       enable SDL2 [disable]
+    --disable-jack      disable JACK audio output [autodetect]
+    --disable-pulse     disable PulseAudio audio output [autodetect]
+    --enable-openal     enable OpenAL audio output [disable]
+    --disable-wayland   disable Wayland [autodetect]
+    --disable-vdpau     disable VDPAU acceleration [autodetect]
+    --disable-vdpau-hwaccel
+                        disable libavcodec VDPAU hwaccel [autodetect]
+    --disable-lua       disable Lua [autodetect]
+    --disable-oss-audio
+                        disable OSS audio output [autodetect]
+
+# not in slack def but I have a sb:
+    --disable-vaapi     disable VAAPI acceleration [autodetect]
+    --disable-vaapi-hwaccel
+                        disable libavcodec VAAPI hwaccel [autodetect]
+
