@@ -1,7 +1,7 @@
 PRGNAM="xwinfo"
 VERSION="38366054f087b1431af8b887c6cef3636286dfc8"
 HOMEPAGE="https://github.com/baskerville/xwinfo"
-DOWNLOAD="https://github.com/baskerville/xwinfo/archive/38366054f087b1431af8b887c6cef3636286dfc8.tar.gz
+DOWNLOAD="https://github.com/baskerville/xwinfo/archive/38366054f087b1431af8b887c6cef3636286dfc8.tar.gz"
 MD5SUM="67a00d299403417bff9d9414eac65e94"
 DOWNLOAD_x86_64=""
 MD5SUM_x86_64=""
