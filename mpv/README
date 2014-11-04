@@ -34,6 +34,10 @@ disabled by default, you could use the following:
 
 ~# BUILD_OPTS="--enable-cdda --enable-openal" ./mpv.SlackBuild
 
+or, if you use fakeroot to build packages:
+
+~$ fakeroot env BUILD_OPTS="--enable-cdda --enable-openal" ./mpv.SlackBuild
+
 The following is a partial output of the configure help that lists most of the
 build options available.
 
