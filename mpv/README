@@ -5,9 +5,6 @@ mpv is a movie player based on MPlayer and mplayer2. It shares some features
 with the former projects while introducing many more. It supports a wide
 variety of video file formats, audio and video codecs, and subtitle types.
 
-mpv homepage: http://mpv.io/
-
-required: ffmpeg, libass, docutils
 optional: docutils, lua, libquvi, lirc, libbluray, libdvdnav, enca, ladspa_sdk,
           SDL2, jack-audio-connection-kit, pulseaudio, OpenAL, wayland, vdpau,
           oss, libbs2b, portaudio
@@ -17,8 +14,8 @@ This is the reason I have included docutils in both the `required` and
 `optional` lists. If you don't concider the man pages required, then the
 docutils package is optional, too. Building the man pages is recommended.
 
-Dependancies are autodetected. Some optional dependancies are disabled by
-default and may be enabled (see BUILD_OPTS). Optional dependancies that are
+Dependencies are autodetected. Some optional dependencies are disabled by
+default and may be enabled (see BUILD_OPTS). Optional dependencies that are
 enabled by default may be disabled (see BUILD_OPTS).
 
 NUMJOBS:
@@ -38,115 +35,7 @@ or, if you use fakeroot to build packages:
 
 ~$ fakeroot env BUILD_OPTS="--enable-cdda --enable-openal" ./mpv.SlackBuild
 
-The following is a partial output of the configure help that lists most of the
-build options available.
-
-  build and install options:
-    --enable-zsh-comp   enable zsh completion [disable]
-
-  optional features:
-    --disable-iconv     disable iconv [autodetect]
-    --enable-terminfo   enable terminfo [disable]
-    --enable-termcap    enable termcap [disable]
-    --disable-termios   disable termios [autodetect]
-    --disable-shm       disable shm [autodetect]
-    --disable-libguess  disable libguess support [autodetect]
-    --disable-libsmbclient
-                        disable Samba support [autodetect]
-    --disable-libquvi4  disable libquvi 0.4.x support [autodetect]
-    --disable-libquvi9  disable libquvi 0.9.x support [autodetect]
-    --disable-libquvi   disable libquvi support [autodetect]
-    --disable-libass    disable SSA/ASS support [autodetect]
-    --disable-libass-osd
-                        disable libass OSD support [autodetect]
-    --disable-encoding  disable Encoding [autodetect]
-    --enable-joystick   enable joystick [disable]
-    --disable-lirc      disable lirc [autodetect]
-    --disable-libbluray
-                        disable Bluray support [autodetect]
-    --disable-dvdread   disable dvdread support [autodetect]
-    --disable-dvdnav    disable dvdnav support [autodetect]
-    --enable-cdda       enable cdda support (libcdio) [disable]
-    --disable-enca      disable ENCA support [autodetect]
-    --disable-mpg123    disable mpg123 support [autodetect]
-    --disable-ladspa    disable LADSPA plugin support [autodetect]
-    --disable-libbs2b   disable libbs2b audio filter support [autodetect]
-    --disable-lcms2     disable LCMS2 support [autodetect]
-    --disable-vapoursynth
-                        disable VapourSynth filter bridge [autodetect]
-    --disable-libavresample
-                        disable libavresample [autodetect]
-    --disable-libswresample
-                        disable libswresample [autodetect]
-    --disable-libavfilter
-                        disable libavfilter [autodetect]
-    --disable-libavdevice
-                        disable libavdevice [autodetect]
-    --disable-libpostproc
-                        disable libpostproc [autodetect]
-
-  audio outputs:
-    --enable-sdl2       enable SDL2 [disable]
-    --enable-sdl1       enable SDL (1.x) [disable]
-    --disable-oss-audio
-                        disable OSS audio output [autodetect]
-    --disable-rsound    disable RSound audio output [autodetect]
-    --disable-pulse     disable PulseAudio audio output [autodetect]
-    --enable-portaudio  enable PortAudio audio output [disable]
-    --disable-jack      disable JACK audio output [autodetect]
-    --enable-openal     enable OpenAL audio output [disable]
-    --disable-alsa      disable ALSA audio output [autodetect]
-
-  video outputs:
-    --disable-wayland   disable Wayland [autodetect]
-    --disable-x11       disable X11 [autodetect]
-    --disable-xss       disable Xss screensaver extensions [autodetect]
-    --disable-xext      disable X extensions [autodetect]
-    --disable-xv        disable Xv video output [autodetect]
-    --disable-xinerama  disable Xinerama [autodetect]
-    --disable-xrandr    disable Xrandr [autodetect]
-    --disable-gl-x11    disable OpenGL X11 Backend [autodetect]
-    --disable-gl-wayland
-                        disable OpenGL Wayland Backend [autodetect]
-    --disable-gl        disable OpenGL video outputs [autodetect]
-    --disable-vdpau     disable VDPAU acceleration [autodetect]
-    --disable-vdpau-gl-x11
-                        disable VDPAU with OpenGL/X11 [autodetect]
-    --disable-vaapi     disable VAAPI acceleration [autodetect]
-    --disable-vaapi-vpp
-                        disable VAAPI VPP [autodetect]
-    --disable-vaapi-glx
-                        disable VAAPI GLX [autodetect]
-    --disable-caca      disable CACA [autodetect]
-    --disable-dvb       disable DVB [autodetect]
-    --disable-dvbin     disable DVB input module [autodetect]
-    --disable-jpeg      disable JPEG support [autodetect]
-
-  hwaccels:
-    --disable-vaapi-hwaccel
-                        disable libavcodec VAAPI hwaccel [autodetect]
-    --disable-vdpau-hwaccel
-                        disable libavcodec VDPAU hwaccel [autodetect]
-
-  tv features:
-    --disable-tv        disable TV interface [autodetect]
-    --disable-tv-v4l2   disable Video4Linux2 TV interface [autodetect]
-    --disable-libv4l2   disable libv4l2 support [autodetect]
-    --disable-pvr       disable Video4Linux2 MPEG PVR interface [autodetect]
-    --disable-audio-input
-                        disable audio input support [autodetect]
-
-  scripting:
-    --disable-lua       disable Lua [autodetect]
-    --lua=LUA_VER       select Lua package which should be autodetected.
-                        Choices: 51 51deb 51fbsd 52 52deb 52fbsd luajit
-
-  standalone app:
-    --disable-cplayer   disable mpv CLI player [autodetect]
-
-
 The following list is meant as a note to myself of build options or optional
-dependancies currently unavailable via full Slackware installation and from SBo:
+dependencies currently unavailable via full Slackware installation and from SBo:
 
-libfdk-aac, vaapi, vapoursynth, lcms2, libguess, libiconv, rsound
-
+libfdk-aac, vaapi, vapoursynth, libguess, libiconv, rsound
