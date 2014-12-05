@@ -23,7 +23,7 @@
 #  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 PRGNAM=mpv
-VERSION=${VERSION:-0.7.0}
+VERSION=${VERSION:-0.7.1}
 BUILD=${BUILD:-1}
 TAG=${TAG:-_SBo}
 
@@ -111,9 +111,7 @@ if [ -d $PKG/usr/man ]; then
 fi
 
 mkdir -p $PKG/usr/doc/$PRGNAM-$VERSION
-cp -a \
-  $DOCS \
-  $PKG/usr/doc/$PRGNAM-$VERSION
+cp -a $DOCS $PKG/usr/doc/$PRGNAM-$VERSION
 mkdir -p $PKG/usr/doc/$PRGNAM-$VERSION/manual
 for f in $MANUAL; do
   cp -a $f $PKG/usr/doc/$PRGNAM-$VERSION/manual/
