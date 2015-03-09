@@ -1,5 +1,5 @@
---- avidemux.SlackBuild.orig	2015-03-08 20:06:57.403699760 -0400
-+++ avidemux.SlackBuild	2015-03-08 20:24:21.269751043 -0400
+--- avidemux.SlackBuild.orig	2015-03-07 18:39:25.000000000 -0500
++++ avidemux.SlackBuild	2015-03-08 23:05:44.695226763 -0400
 @@ -26,7 +26,7 @@
  
  PRGNAM=avidemux
@@ -26,7 +26,7 @@
 -    -DCMAKE_INSTALL_PREFIX=/usr \
 -    -DFAKEROOT="$PKG" \
 -    ../avidemux_core
--  make 
+-  make
 -  make install DESTDIR=$PKG
 +cmake \
 +  -DCMAKE_C_FLAGS:STRING="$SLKCFLAGS" \
@@ -49,7 +49,7 @@
      -DCMAKE_INSTALL_PREFIX=/usr \
      -DFAKEROOT="$PKG" \
      ../avidemux/qt4
--  make 
+-  make
 -  make install DESTDIR=$PKG
 -cd ..
 +  make -j $NUMJOBS
@@ -68,7 +68,7 @@
      -DCMAKE_INSTALL_PREFIX=/usr \
      -DFAKEROOT="$PKG" \
      ../avidemux/gtk
--  make 
+-  make
 -  make install DESTDIR=$PKG
 -cd ..
 +  make -j $NUMJOBS
@@ -101,7 +101,7 @@
      -DPLUGIN_UI=COMMON \
      -DFAKEROOT="$PKG" \
      ../avidemux_plugins
--  make 
+-  make
 -  make install DESTDIR=$PKG
 +  make -j $NUMJOBS
 +  make -j $NUMJOBS install DESTDIR=$PKG
@@ -119,7 +119,7 @@
      -DPLUGIN_UI=QT4 \
      -DFAKEROOT="$PKG" \
      ../avidemux_plugins
--  make 
+-  make
 -  make install DESTDIR=$PKG
 -cd ..
 +  make -j $NUMJOBS
@@ -139,7 +139,7 @@
      -DPLUGIN_UI=GTK \
      -DFAKEROOT="$PKG" \
      ../avidemux_plugins
--  make 
+-  make
 -  make install DESTDIR=$PKG
 -cd ..
 +  make -j $NUMJOBS
@@ -159,7 +159,7 @@
      -DPLUGIN_UI=CLI \
      -DFAKEROOT="$PKG" \
      ../avidemux_plugins
--  make 
+-  make
 -  make install DESTDIR=$PKG
 -cd ..
 +  make -j $NUMJOBS
