@@ -9,11 +9,10 @@
  TAG=${TAG:-_SBo}
  
  DOCS="AUTHORS License.txt COPYING scripts/automkv.py"
-@@ -73,53 +73,64 @@
+@@ -73,53 +73,63 @@
   \( -perm 666 -o -perm 664 -o -perm 640 -o -perm 600 -o -perm 444 \
    -o -perm 440 -o -perm 400 \) -exec chmod 644 {} \;
  
-+NUMJOBS=${NUMJOBS:-1}
 +WITH_CLI=${WITH_CLI:-YES}
 +WITH_QT4=${WITH_QT4:-YES}
 +WITH_GTK=${WITH_GTK:-NO}
@@ -34,8 +33,8 @@
 +  -DCMAKE_INSTALL_PREFIX=/usr \
 +  -DFAKEROOT="$PKG" \
 +  ../avidemux_core
-+make -j $NUMJOBS
-+make -j $NUMJOBS install DESTDIR=$PKG
++make -j 1
++make -j 1 install DESTDIR=$PKG
  cd ..
  
 -mkdir -p build_qt4
@@ -52,8 +51,8 @@
 -  make
 -  make install DESTDIR=$PKG
 -cd ..
-+  make -j $NUMJOBS
-+  make -j $NUMJOBS install DESTDIR=$PKG
++  make -j 1
++  make -j 1 install DESTDIR=$PKG
 +  cd ..
 +fi
  
@@ -71,8 +70,8 @@
 -  make
 -  make install DESTDIR=$PKG
 -cd ..
-+  make -j $NUMJOBS
-+  make -j $NUMJOBS install DESTDIR=$PKG
++  make -j 1
++  make -j 1 install DESTDIR=$PKG
 +  cd ..
 +fi
  
@@ -90,8 +89,8 @@
 -  make
 -  make install DESTDIR=$PKG
 -cd ..
-+  make -j $NUMJOBS
-+  make -j $NUMJOBS install DESTDIR=$PKG
++  make -j 1
++  make -j 1 install DESTDIR=$PKG
 +  cd ..
 +fi
  
@@ -103,8 +102,8 @@
      ../avidemux_plugins
 -  make
 -  make install DESTDIR=$PKG
-+  make -j $NUMJOBS
-+  make -j $NUMJOBS install DESTDIR=$PKG
++  make -j 1
++  make -j 1 install DESTDIR=$PKG
  cd ..
  
 -mkdir -p build_plugins_qt4
@@ -122,8 +121,8 @@
 -  make
 -  make install DESTDIR=$PKG
 -cd ..
-+  make -j $NUMJOBS
-+  make -j $NUMJOBS install DESTDIR=$PKG
++  make -j 1
++  make -j 1 install DESTDIR=$PKG
 +  cd ..
 +fi
  
@@ -142,8 +141,8 @@
 -  make
 -  make install DESTDIR=$PKG
 -cd ..
-+  make -j $NUMJOBS
-+  make -j $NUMJOBS install DESTDIR=$PKG
++  make -j 1
++  make -j 1 install DESTDIR=$PKG
 +  cd ..
 +fi
  
@@ -162,8 +161,8 @@
 -  make
 -  make install DESTDIR=$PKG
 -cd ..
-+  make -j $NUMJOBS
-+  make -j $NUMJOBS install DESTDIR=$PKG
++  make -j 1
++  make -j 1 install DESTDIR=$PKG
 +  cd ..
 +fi
  
