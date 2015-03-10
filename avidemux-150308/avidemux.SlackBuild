@@ -202,11 +202,11 @@ fi
 
 mkdir -p $PKG/usr/share/applications
 if [ "x$WITH_GTK" = "xYES" ]; then
-	cat avidemux2.destop | sed -e 's/avidemux2$/avidemux/' -e 's/2_gtk/3_gtk/' >\
+	cat avidemux2.desktop | sed -e 's/avidemux2$/avidemux/' -e 's/2_gtk/3_gtk/' >\
 		$PKG/usr/share/applications/avidemux_gtk.desktop
 fi
 if [ "x$WITH_QT4" = "xYES" ]; then
-	cat avidemux2.destop | sed -e 's/avidemux2$/avidemux/' -e 's/2_gtk/3_qt/' >\
+	cat avidemux2.desktop | sed -e 's/avidemux2$/avidemux/' -e 's/2_gtk/3_qt/' >\
 		$PKG/usr/share/applications/avidemux_qt.desktop
 fi
 mkdir -p $PKG/usr/share/pixmaps
