@@ -25,7 +25,7 @@
 #  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 PRGNAM=avidemux
-VERSION=${VERSION:-2.6.8-150308}
+VERSION=${VERSION:-2.6.8}
 BUILD=${BUILD:-1}
 TAG=${TAG:-_SBo}
 PATCH_VER=${PATCH_VER:-150308}
@@ -66,7 +66,7 @@ rm -rf $PKG
 mkdir -p $TMP $PKG $OUTPUT
 cd $TMP
 rm -rf ${PRGNAM}_${VERSION}
-tar xvf $CWD/${PRGNAM}_${VERSION}.tar.xz
+tar xvf $CWD/${PRGNAM}_${VERSION}.tar.gz
 cd ${PRGNAM}_${VERSION}
 chown -R root:root .
 find -L . \
@@ -80,8 +80,9 @@ WITH_QT4=${QT4:-YES}
 WITH_GTK=${GTK:-NO}
 
 rm -f avidemux_core/ffmpeg_package/ffmpeg-1.2.1.tar.bz2
-mv $CWD/ffmpeg-${FFMPEG_VER}.tar.bz2 avidemux_core/ffmpeg_package/
-zcat $CWD/patches/150308.patch.gz | patch -Np1 -
+cp $CWD/ffmpeg-${FFMPEG_VER}.tar.bz2 avidemux_core/ffmpeg_package/
+zcat $CWD/patches/${PATCH_VER}.patch.gz | patch -p1
+rm -f avidemux_core/ffmpeg_package/patches/libavcodec_put_bits.h.patch
 
 mkdir -p build_core
 cd build_core
@@ -233,4 +234,4 @@ cat $CWD/slack-desc > $PKG/install/slack-desc
 cat $CWD/doinst.sh > $PKG/install/doinst.sh
 
 cd $PKG
-/sbin/makepkg -l y -c n $OUTPUT/${PRGNAM}-${VERSION}-$ARCH-$BUILD$TAG.${PKGTYPE:-tgz}
+/sbin/makepkg -l y -c n $OUTPUT/${PRGNAM}-${VERSION}-${PATCH_VER}-$ARCH-$BUILD$TAG.${PKGTYPE:-tgz}
