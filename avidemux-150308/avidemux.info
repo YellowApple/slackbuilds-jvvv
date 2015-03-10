@@ -1,0 +1,14 @@
+PRGNAM="avidemux"
+VERSION="2.6.8-150308"
+HOMEPAGE="http://avidemux.org"
+DOWNLOAD="http://downloads.sourceforge.net/avidemux/avidemux_2.6.8.tar.gz
+          https://github.com/jvvv/slackbuilds/avidemux-alpha/patches/150308.patch.gz
+          https://www.ffmpeg.org/releases/ffmpeg-2.4.3.tar.bz2"
+MD5SUM="33d0cd47cb84a4e9f4e1b3160405c85c
+        f69ae73008b00ac265920fe9cd9caea4
+        8da635baff57d7ab704b1daca5a99b47"
+DOWNLOAD_x86_64=""
+MD5SUM_x86_64=""
+REQUIRES="a52dec faac faad2 lame libdca x264 xvidcore"
+MAINTAINER="John Vogel"
+EMAIL="jvogel@stny.rr.com"
