@@ -1,6 +1,10 @@
 mpv
 ===
 
+NOTE: This SlackBuild builds and links against static ffmpeg libraries.
+It is an interim measure to make newest mpv available while updates to
+ffmpeg on SBo are not viable.
+
 mpv is a movie player based on MPlayer and mplayer2. It shares some features
 with the former projects while introducing many more. It supports a wide
 variety of video file formats, audio and video codecs, and subtitle types.
