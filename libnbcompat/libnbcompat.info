@@ -1,6 +1,6 @@
 PRGNAM="libnbcompat"
 VERSION="20150421"
-HOMEPAGE="http://ftp.netbsd.org/pub/pkgsrc/current/pkgsrc/libnbcompat/"
+HOMEPAGE="http://ftp.netbsd.org/pub/pkgsrc/current/pkgsrc/pkgtools/libnbcompat/"
 DOWNLOAD="https://github.com/jvvv/slackbuilds/libnbcompat/libnbcompat-20150421.tar.gz"
 MD5SUM="cb70587da4271995be1ceda9088a5722"
 DOWNLOAD_x86_64=""
