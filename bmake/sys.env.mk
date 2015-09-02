@@ -36,6 +36,8 @@ SLACK_VAR_LIST = \
 	DOCDIR \
 	NLSDIR \
 	KMODDIR \
+	DOCOWN \
+	DOCGRP \
 	MK_GPROF \
 	MK_META_MODE \
 	MK_LIBTOOL \
@@ -57,6 +59,8 @@ SLACK_VAR_LIST = \
 	MK_INFO \
 	MK_NLS \
 	MK_DOC \
+	PROG_INSTALL_OWN \
+	DOC_INSTALL_OWN \
 
 
 # Slackware overrides for own.mk
@@ -78,6 +82,10 @@ LINTLIBDIR?=	${libprefix}/lib${LIBDIRSUFFIX}/lint
 DOCDIR?=	${prefix}/doc
 NLSDIR?=	${prefix}/lib${LIBDIRSUFFIX}/locale
 KMODDIR?=	/lib/modules
+
+# referenced in doc.mk
+DOCOWN?=	root
+DOCGRP?=	${ROOT_GROUP}
 
 # referenced in prog.mk
 MK_GPROF=	no

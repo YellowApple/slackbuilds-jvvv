@@ -1,12 +1,60 @@
-diff -Naur a/mk/doc.mk b/mk/doc.mk
---- a/mk/doc.mk	2012-11-11 17:37:02.000000000 -0500
-+++ b/mk/doc.mk	2015-09-02 00:21:55.398672300 -0400
-@@ -47,6 +47,8 @@
+Index: doc.mk
+===================================================================
+RCS file: /volume/cvs/sjg/mk/doc.mk,v
+retrieving revision 1.4
+diff -u -p -r1.4 doc.mk
+--- doc.mk	11 Nov 2012 22:37:02 -0000	1.4
++++ doc.mk	2 Sep 2015 16:51:06 -0000
+@@ -47,17 +47,19 @@ install:
  .else
  FILES?=	${SRCS}
  install:
-+#	[ -d ${DESTDIR}${BINDIR}/${DIR} ] || \
-+#	${INSTALL} -d ${PROG_INSTALL_OWN} -m 755 ${DESTDIR}${BINDIR}/${DIR}
- 	${INSTALL} -c -o ${BINOWN} -g ${BINGRP} -m 444 \
- 	    Makefile ${FILES} ${EXTRA} ${DESTDIR}${BINDIR}/${DIR}
+-	${INSTALL} -c -o ${BINOWN} -g ${BINGRP} -m 444 \
+-	    Makefile ${FILES} ${EXTRA} ${DESTDIR}${BINDIR}/${DIR}
++	test -d ${DESTDIR}${DOCDIR}/${DIR} || \
++	    ${INSTALL} -d ${DOC_INSTALL_OWN} -m ${DIRMODE} ${DESTDIR}${DOCDIR}/${DIR}
++	${INSTALL} ${COPY} ${DOC_INSTALL_OWN} -m ${DOCMODE} \
++	    Makefile ${FILES} ${EXTRA} ${DESTDIR}${DOCDIR}/${DIR}
  .endif
+ 
+ spell: ${SRCS}
+ 	spell ${SRCS} | sort | comm -23 - spell.ok > paper.spell
+ 
+-BINDIR?=	/usr/share/doc
+-BINGRP?=	bin
+-BINOWN?=	bin
+-BINMODE?=	444
+-
+ .include <own.mk>
++
++.if !empty(DOCOWN)
++DOC_INSTALL_OWN?= -o ${DOCOWN} -g ${DOGGRP}
++.endif
++
+ .endif
+Index: own.mk
+===================================================================
+RCS file: /volume/cvs/sjg/mk/own.mk,v
+retrieving revision 1.28
+diff -u -p -r1.28 own.mk
+--- own.mk	16 Apr 2015 16:59:00 -0000	1.28
++++ own.mk	2 Sep 2015 16:52:48 -0000
+@@ -133,7 +133,9 @@ USERGRP!=  id -g
+ .for x in BIN CONF DOC INFO KMOD LIB MAN NLS SHARE
+ $xOWN=  ${USER}
+ $xGRP=  ${USERGRP}
++$x_INSTALL_OWN=
+ .endfor
++PROG_INSTALL_OWN=
+ .endif
+ .endif
+ 
+@@ -143,6 +145,7 @@ BINGRP?=	${ROOT_GROUP}
+ BINOWN?=	root
+ BINMODE?=	555
+ NONBINMODE?=	444
++DIRMODE?=	755
+ 
+ # Define MANZ to have the man pages compressed (gzip)
+ #MANZ=		1
+
