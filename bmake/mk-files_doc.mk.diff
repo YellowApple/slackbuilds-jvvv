@@ -1,0 +1,12 @@
+diff -Naur a/mk/doc.mk b/mk/doc.mk
+--- a/mk/doc.mk	2012-11-11 17:37:02.000000000 -0500
++++ b/mk/doc.mk	2015-09-02 00:21:55.398672300 -0400
+@@ -47,6 +47,8 @@
+ .else
+ FILES?=	${SRCS}
+ install:
++#	[ -d ${DESTDIR}${BINDIR}/${DIR} ] || \
++#	${INSTALL} -d ${PROG_INSTALL_OWN} -m 755 ${DESTDIR}${BINDIR}/${DIR}
+ 	${INSTALL} -c -o ${BINOWN} -g ${BINGRP} -m 444 \
+ 	    Makefile ${FILES} ${EXTRA} ${DESTDIR}${BINDIR}/${DIR}
+ .endif

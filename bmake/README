@@ -12,5 +12,3 @@ In 2003 bmake switched to a date based version (first was 20030714)
 which generally represents the date it was last merged with NetBSD's
 make.  Since then, NetBSD's make is imported within a week of any
 interesting changes, so that bmake tracks it very closely.
-
-homepage: http://www.crufty.net/help/sjg/bmake.htm
