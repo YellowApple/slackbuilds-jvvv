@@ -1,0 +1,11 @@
+PRGNAM="mpv"
+VERSION="git_HEAD"
+HOMEPAGE="http://mpv.io"
+# downloads via git in SlackBuild script
+DOWNLOAD="http://www.freehackers.org/~tnagy/release/waf-1.8.12"
+MD5SUM="cef4ee82206b1843db082d0b0506bf71"
+DOWNLOAD_x86_64=""
+MD5SUM_x86_64=""
+REQUIRES="lame libass x264 docutils"
+MAINTAINER="John Vogel"
+EMAIL="jvogel4@stny.rr.com"

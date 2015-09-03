@@ -23,7 +23,9 @@
 #  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 PRGNAM=mpv
-VERSION=${VERSION:-0.9.2}
+VERSION=${VERSION:-git_HEAD}
+FFMPEG_VERSION=${FFMPEG_VERSION:-git_HEAD}
+WAF_VERSION=${WAF_VERSION:-1.8.12}
 BUILD=${BUILD:-1}
 TAG=${TAG:-_SBo}
 
@@ -61,9 +63,80 @@ set -e
 rm -rf $PKG
 mkdir -p $TMP $PKG $OUTPUT
 cd $TMP
-rm -rf $PRGNAM-$VERSION
-tar xvf $CWD/$PRGNAM-$VERSION.tar.gz || tar xvf $CWD/v$VERSION.tar.gz
-cp $CWD/waf-1.8.4 $PRGNAM-$VERSION/waf
+
+case "$FFMPEG_VERSION" in
+  git_*)
+    FFMPEG_VERSION="${FFMPEG_VERSION##git_}"
+    rm -rf ffmpeg-$FFMPEG_VERSION
+    git clone -b master git://source.ffmpeg.org/ffmpeg.git ffmpeg-$FFMPEG_VERSION
+    if [ "$FFMPEG_VERSION" != "HEAD" ]; then
+      cd ffmpeg-$FFMPEG_VERSION
+      git checkout $FFMPEG_VERSION
+      cd ..
+    fi
+    ;;
+  *)
+    rm -rf ffmpeg-$FFMPEG_VERSION
+    tar xvf $CWD/ffmpeg-$FFMPEG_VERSION.tar.bz2
+    ;;
+esac
+cd ffmpeg-$FFMPEG_VERSION
+chown -R root:root .
+find -L . \
+ \( -perm 777 -o -perm 775 -o -perm 750 -o -perm 711 -o -perm 555 \
+  -o -perm 511 \) -exec chmod 755 {} \; -o \
+ \( -perm 666 -o -perm 664 -o -perm 640 -o -perm 600 -o -perm 444 \
+  -o -perm 440 -o -perm 400 \) -exec chmod 644 {} \;
+
+rm -rf $TMP/$PRGNAM-buildlibs
+mkdir -p $TMP/$PRGNAM-buildlibs
+
+CFLAGS="$SLKCFLAGS" \
+CXXFLAGS="$SLKFLAGS" \
+./configure \
+  --prefix=$TMP/$PRGNAM-buildlibs \
+  --disable-debug \
+  --disable-shared \
+  --enable-static \
+  --disable-programs \
+  --disable-doc \
+  --enable-pthreads \
+  --enable-libtheora \
+  --enable-libvorbis \
+  --enable-libass \
+  --enable-gpl \
+  --enable-version3 \
+  --enable-postproc \
+  --enable-swscale \
+  --enable-x11grab \
+  --enable-avfilter \
+  --enable-gnutls \
+  --enable-libcdio \
+  --enable-libssh \
+  --enable-libmp3lame \
+  --enable-libx264
+
+make
+make install
+
+cd $TMP
+case "$VERSION" in
+  git_*)
+    VERSION="${VERSION##git_}"
+    rm -rf $PRGNAM-$VERSION
+    git clone -b master https://github.com/mpv-player/mpv.git mpv-$VERSION
+    if [ "$VERSION" != "HEAD" ]; then
+      cd mpv-$VERSION
+      git checkout $VERSION
+      cd ..
+    fi
+    ;;
+  *)
+    rm -rf $PRGNAM-$VERSION
+    tar xvf $CWD/$PRGNAM-$VERSION.tar.gz || tar xvf $CWD/v$VERSION.tar.gz
+    ;;
+esac
+cp $CWD/waf-1.8.12 $PRGNAM-$VERSION/waf
 chmod +x $PRGNAM-$VERSION/waf
 cd $PRGNAM-$VERSION
 chown -R root:root .
@@ -73,7 +146,7 @@ find -L . \
  \( -perm 666 -o -perm 664 -o -perm 640 -o -perm 600 -o -perm 444 \
   -o -perm 440 -o -perm 400 \) -exec chmod 644 {} \;
 
-DOCS="Copyright LICENSE README.md RELEASE_NOTES"
+DOCS="Copyright LICENSE README.md"
 MANUAL="DOCS/*.md DOCS/*.rst DOCS/*.txt DOCS/client_api_examples/"
 
 # By default, play it safe since it is so easy to override.
@@ -84,13 +157,14 @@ BUILD_OPTS=${BUILD_OPTS:-""}
 BUILD_OPTS="$BUILD_OPTS --jobs=$NUMJOBS"
 
 # Setting CFLAGS and CXXFLAGS breaks configure.
+PKG_CONFIG_PATH="$TMP/$PRGNAM-buildlibs/lib/pkgconfig" \
 ./waf configure \
-  --prefix=/usr \
-  --libdir=/usr/lib${LIBDIRSUFFIX} \
-  --confdir=/etc/$PRGNAM \
-  --mandir=/usr/man \
-  --docdir=/usr/doc/$PRGNAM-$VERSION \
-  $BUILD_OPTS
+	--prefix=/usr \
+	--libdir=/usr/lib${LIBDIRSUFFIX} \
+	--confdir=/etc/$PRGNAM \
+	--mandir=/usr/man \
+	--docdir=/usr/doc/$PRGNAM-$VERSION \
+	$BUILD_OPTS
 
 ./waf --jobs=$NUMJOBS build
 ./waf --destdir=$PKG install
