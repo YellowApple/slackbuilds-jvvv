@@ -7,8 +7,11 @@ These are SlackBuilds that I maintain.
 
 * avidemux
 * bar
+* bmake
 * bspwm
+* dash
 * dvdbackup
+* mpv
 * sutils
 * sxhkd
 * xtitle
