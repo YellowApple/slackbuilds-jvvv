@@ -28,7 +28,7 @@ diff -u -p -r1.4 doc.mk
  .include <own.mk>
 +
 +.if !empty(DOCOWN)
-+DOC_INSTALL_OWN?= -o ${DOCOWN} -g ${DOGGRP}
++DOC_INSTALL_OWN?= -o ${DOCOWN} -g ${DOCGRP}
 +.endif
 +
  .endif
